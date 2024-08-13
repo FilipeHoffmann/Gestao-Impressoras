@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contratos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container">
+    <h1 class="my-4">Lista de Contratos</h1>
+
+    <!-- Botão para abrir o modal de cadastro -->
+    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#createContratoModal">Cadastrar Contrato</button>
+
+    <!-- Modal de Cadastro -->
+    <div class="modal fade" id="createContratoModal" tabindex="-1" aria-labelledby="createContratoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createContratoModalLabel">Cadastrar Contrato</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('contratos') }}">
+                        <div class="form-group">
+                            <label for="idContrato">ID Contrato</label>
+                            <input type="text" class="form-control" id="idContrato" name="idContrato" placeholder="ID Contrato" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataInicial">Data Inicial</label>
+                            <input type="date" class="form-control" id="dataInicial" name="dataInicial" placeholder="Data Inicial" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataFinal">Data Final</label>
+                            <input type="date" class="form-control" id="dataFinal" name="dataFinal" placeholder="Data Final" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataFinalAtual">Data Final Atual</label>
+                            <input type="date" class="form-control" id="dataFinalAtual" name="dataFinalAtual" placeholder="Data Final Atual" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Adicionar Contrato</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Contrato</th>
+                <th>Data Inicial</th>
+                <th>Data Final</th>
+                <th>Data Final Atual</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contrato in contratos %}
+            <tr>
+                <td>{{ contrato.idContrato }}</td>
+                <td>{{ contrato.dataInicial }}</td>
+                <td>{{ contrato.dataFinal }}</td>
+                <td>{{ contrato.dataFinalAtual }}</td>
+                <td>
+                    <!-- Botão para abrir o modal de edição -->
+                    <button class="btn btn-warning" data-toggle="modal" data-target="#editContratoModal{{ contrato.idContrato }}">Editar</button>
+                    <!-- Botão para abrir o modal de exclusão -->
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#deleteContratoModal{{ contrato.idContrato }}">Excluir</button>
+                </td>
+            </tr>
+
+            <!-- Modal de Edição -->
+            <div class="modal fade" id="editContratoModal{{ contrato.idContrato }}" tabindex="-1" aria-labelledby="editContratoModalLabel{{ contrato.idContrato }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editContratoModalLabel{{ contrato.idContrato }}">Editar Contrato</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" action="{{ url_for('update_contrato', id=contrato.idContrato) }}">
+                                <div class="form-group">
+                                    <label for="editDataInicial">Data Inicial</label>
+                                    <input type="date" class="form-control" id="editDataInicial" name="dataInicial" value="{{ contrato.dataInicial }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editDataFinal">Data Final</label>
+                                    <input type="date" class="form-control" id="editDataFinal" name="dataFinal" value="{{ contrato.dataFinal }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editDataFinalAtual">Data Final Atual</label>
+                                    <input type="date" class="form-control" id="editDataFinalAtual" name="dataFinalAtual" value="{{ contrato.dataFinalAtual }}" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>                                               
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Exclusão -->
+            <div class="modal fade" id="deleteContratoModal{{ contrato.idContrato }}" tabindex="-1" aria-labelledby="deleteContratoModalLabel{{ contrato.idContrato }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteContratoModalLabel{{ contrato.idContrato }}">Confirmar Exclusão</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Tem certeza de que deseja excluir o contrato ID {{ contrato.idContrato }}?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <form method="POST" action="{{ url_for('delete_contrato', id=contrato.idContrato) }}">
+                                <button type="submit" class="btn btn-danger">Excluir</button>
+                            </form>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </tbody>
+    </table>
+    <div><a class="btn btn-primary mb-3" href= {{ url_for('index') }} > Tela Inicial</a></div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

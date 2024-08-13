@@ -1,0 +1,14 @@
+*.class
+*.o
+*.pyc
+bin/
+build/
+dist/
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+*.swp
+pycache/pycache/
