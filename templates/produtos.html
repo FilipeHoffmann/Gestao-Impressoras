@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container">
+    <h1 class="my-4">Lista de Produtos</h1>
+
+    <!-- Botão para abrir o modal de cadastro -->
+    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#createProdutoModal">Cadastrar Produto</button>
+
+    <!-- Modal de Cadastro -->
+    <div class="modal fade" id="createProdutoModal" tabindex="-1" aria-labelledby="createProdutoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createProdutoModalLabel">Cadastrar Produto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('produtos') }}">
+                        <div class="form-group">
+                            <label for="idProduto">ID Produto</label>
+                            <input type="text" class="form-control" id="idProduto" name="idProduto" placeholder="ID Produto" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao">Descrição</label>
+                            <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="franquiaPB">Franquia PB</label>
+                            <input type="number" class="form-control" id="franquiaPB" name="franquiaPB" placeholder="Franquia PB" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="franquiaColor">Franquia Color</label>
+                            <input type="number" class="form-control" id="franquiaColor" name="franquiaColor" placeholder="Franquia Color" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Tipo</label>
+                            <select class="form-control" id="tipo" name="tipo" required>
+                                <option value="Impressora">Impressora</option>
+                                <option value="Multifuncional Colorida">Multifuncional Colorida</option>
+                                <option value="Multifuncional Monocromática">Multifuncional Monocromática</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="copiaLocacao">Cópia/Locação</label>
+                            <select class="form-control" id="copiaLocacao" name="copiaLocacao" required>
+                                <option value="Cópia">Cópia</option>
+                                <option value="Locação">Locação</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="color">Color</label>
+                            <select class="form-control" id="color" name="color" required>
+                                <option value="SIM">SIM</option>
+                                <option value="NÃO">NÃO</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">Adicionar Produto</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela para listar produtos -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Produto</th>
+                <th>Descrição</th>
+                <th>Franquia PB</th>
+                <th>Franquia Color</th>
+                <th>Tipo</th>
+                <th>Cópia Locação</th>
+                <th>Color</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto.idProduto }}</td>
+                <td>{{ produto.descricao }}</td>
+                <td>{{ produto.franquiaPB }}</td>
+                <td>{{ produto.franquiaColor }}</td>
+                <td>{{ produto.tipo }}</td>
+                <td>{{ produto.copiaLocacao }}</td>
+                <td>{{ produto.color }}</td>
+                <td>
+                    <!-- Botão para abrir o modal de edição -->
+                    <button class="btn btn-warning" data-toggle="modal" data-target="#editProdutoModal{{ produto.idProduto }}">Editar</button>
+                    <!-- Botão para abrir o modal de exclusão -->
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#deleteProdutoModal{{ produto.idProduto }}">Excluir</button>
+                </td>
+            </tr>
+
+            <!-- Modal de Edição -->
+            <div class="modal fade" id="editProdutoModal{{ produto.idProduto }}" tabindex="-1" aria-labelledby="editProdutoModalLabel{{ produto.idProduto }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editProdutoModalLabel{{ produto.idProduto }}">Editar Produto</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" action="{{ url_for('update_produto', id=produto.idProduto) }}">
+                                <div class="form-group">
+                                    <label for="editDescricao">Descrição</label>
+                                    <input type="text" class="form-control" id="editDescricao" name="descricao" value="{{ produto.descricao }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editFranquiaPB">Franquia PB</label>
+                                    <input type="number" class="form-control" id="editFranquiaPB" name="franquiaPB" value="{{ produto.franquiaPB }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editFranquiaColor">Franquia Color</label>
+                                    <input type="number" class="form-control" id="editFranquiaColor" name="franquiaColor" value="{{ produto.franquiaColor }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editTipo">Tipo</label>
+                                    <select class="form-control" id="editTipo" name="tipo" required>
+                                        <option value="Impressora" {% if produto.tipo == 'Impressora' %}selected{% endif %}>Impressora</option>
+                                        <option value="Multifuncional Colorida" {% if produto.tipo == 'Multifuncional Colorida' %}selected{% endif %}>Multifuncional Colorida</option>
+                                        <option value="Multifuncional Monocromática" {% if produto.tipo == 'Multifuncional Monocromática' %}selected{% endif %}>Multifuncional Monocromática</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editCopiaLocacao">Cópia/Locação</label>
+                                    <select class="form-control" id="editCopiaLocacao" name="copiaLocacao" required>
+                                        <option value="Cópia" {% if produto.copiaLocacao == 'Cópia' %}selected{% endif %}>Cópia</option>
+                                        <option value="Locação" {% if produto.copiaLocacao == 'Locação' %}selected{% endif %}>Locação</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editColor">Color</label>
+                                    <select class="form-control" id="editColor" name="color" required>
+                                        <option value="SIM" {% if produto.color == 'SIM' %}selected{% endif %}>SIM</option>
+                                        <option value="NÃO" {% if produto.color == 'NÃO' %}selected{% endif %}>NÃO</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>                                               
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Exclusão -->
+            <div class="modal fade" id="deleteProdutoModal{{ produto.idProduto }}" tabindex="-1" aria-labelledby="deleteProdutoModalLabel{{ produto.idProduto }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteProdutoModalLabel{{ produto.idProduto }}">Confirmar Exclusão</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Tem certeza de que deseja excluir o produto ID {{ produto.idProduto }}?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <form method="POST" action="{{ url_for('delete_produto', id=produto.idProduto) }}">
+                                <button type="submit" class="btn btn-danger">Excluir</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div><a class="btn btn-primary mb-3" href="{{ url_for('index') }}">Tela Inicial</a></div>
+    <footer>
+        <p class="text-center">Desenvolvido por <a href="https://github.com/FilipeHoffmann">Filipe Antonio Hoffmann</a></p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
