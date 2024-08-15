@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 from controllers.contratos import Contratos
 from controllers.secretarias import Secretarias
 from controllers.produtos import Produtos
+from controllers.aditivos import Aditivos
 
 app = Flask(__name__)
 
@@ -59,6 +60,23 @@ def update_produto(id):
 @app.route('/produtos/delete/<int:id>', methods=['POST'])
 def delete_produto(id):
     return Produtos.delete_produto(id)
+
+#Aditivos
+
+@app.route('/aditivos', methods=['GET','POST'])
+def aditivos():
+    if request.method == 'GET':
+        return Aditivos.get_aditivos()
+    else:
+        return Aditivos.create_aditivo()
+
+@app.route('/aditivos/update/<int:id>', methods=['POST', 'PUT'])
+def update_aditivo(id):
+    return Aditivos.update_aditivo(id)
+
+@app.route('/aditivos/delete/<int:id>', methods=['POST', 'DELETE'])
+def delete_aditivo(id):
+    return Aditivos.delete_aditivo(id)
 
 if __name__ == '__main__':
     app.run(port=3200, debug=True)

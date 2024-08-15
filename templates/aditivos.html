@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aditivos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container">
+    <h1 class="my-4">Lista de Aditivos</h1>
+
+    <!-- Botão para abrir o modal de cadastro -->
+    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#createAditivoModal">Cadastrar Aditivo</button>
+
+    <!-- Modal de Cadastro de Aditivos -->
+    <div class="modal fade" id="createAditivoModal" tabindex="-1" aria-labelledby="createAditivoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createAditivoModalLabel">Cadastrar Aditivo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('aditivos') }}">
+                        <div class="form-group">
+                            <label for="idAditivo">ID Aditivo</label>
+                            <input type="text" class="form-control" id="idAditivo" name="idAditivo" placeholder="ID Aditivo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao">Descrição</label>
+                            <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataInicial">Data Inicial</label>
+                            <input type="date" class="form-control" id="dataInicial" name="dataInicial" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataFinal">Data Final</label>
+                            <input type="date" class="form-control" id="dataFinal" name="dataFinal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="situacao">Situação</label>
+                            <select class="form-control" id="situacao" name="situacao" required>
+                                <option value="ATIVO">ATIVO</option>
+                                <option value="ENCERRADO">ENCERRADO</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="idContrato">Contrato</label>
+                            <select class="form-control" id="idContrato" name="idContrato" required>
+                                <option value="" disabled selected>Selecione um contrato</option>
+                                {% for contrato in contratos %}
+                                <option value="{{ contrato.idContrato }}">{{ contrato.idContrato }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">Adicionar Aditivo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Tabela para listar aditivos -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Aditivo</th>
+                <th>Descrição</th>
+                <th>Data Inicial</th>
+                <th>Data Final</th>
+                <th>Situação</th>
+                <th>ID Contrato</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aditivo in aditivos %}
+            <tr>
+                <td>{{ aditivo.idAditivo }}</td>
+                <td>{{ aditivo.descricao }}</td>
+                <td>{{ aditivo.dataInicial }}</td>
+                <td>{{ aditivo.dataFinal }}</td>
+                <td>{{ aditivo.situacao }}</td>
+                <td>{{ aditivo.idContrato }}</td>
+                <td>
+                    <!-- Botão para abrir o modal de edição -->
+                    <button class="btn btn-warning" data-toggle="modal" data-target="#editAditivoModal{{ aditivo.idAditivo }}">Editar</button>
+                    <!-- Botão para abrir o modal de exclusão -->
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#deleteAditivoModal{{ aditivo.idAditivo }}">Excluir</button>
+                </td>
+            </tr>
+
+            <!-- Modal de Edição -->
+            <div class="modal fade" id="editAditivoModal{{ aditivo.idAditivo }}" tabindex="-1" aria-labelledby="editAditivoModalLabel{{ aditivo.idAditivo }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editAditivoModalLabel{{ aditivo.idAditivo }}">Editar Aditivo</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" action="{{ url_for('update_aditivo', id=aditivo.idAditivo) }}">
+                                <div class="form-group">
+                                    <label for="editDescricao">Descrição</label>
+                                    <input type="text" class="form-control" id="editDescricao" name="descricao" value="{{ aditivo.descricao }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editDataInicial">Data Inicial</label>
+                                    <input type="date" class="form-control" id="editDataInicial" name="dataInicial" value="{{ aditivo.dataInicial }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editDataFinal">Data Final</label>
+                                    <input type="date" class="form-control" id="editDataFinal" name="dataFinal" value="{{ aditivo.dataFinal }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editSituacao">Situação</label>
+                                    <select class="form-control" id="editSituacao" name="situacao" required>
+                                        <option value="ATIVO" {% if aditivo.situacao == 'ATIVO' %}selected{% endif %}>ATIVO</option>
+                                        <option value="ENCERRADO" {% if aditivo.situacao == 'ENCERRADO' %}selected{% endif %}>ENCERRADO</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editIdContrato">ID Contrato</label>
+                                    <input type="text" class="form-control" id="editIdContrato" name="idContrato" value="{{ aditivo.idContrato }}" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Exclusão -->
+            <div class="modal fade" id="deleteAditivoModal{{ aditivo.idAditivo }}" tabindex="-1" aria-labelledby="deleteAditivoModalLabel{{ aditivo.idAditivo }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteAditivoModalLabel{{ aditivo.idAditivo }}">Confirmar Exclusão</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Tem certeza de que deseja excluir o aditivo ID {{ aditivo.idAditivo }}?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <form method="POST" action="{{ url_for('delete_aditivo', id=aditivo.idAditivo) }}">
+                                <button type="submit" class="btn btn-danger">Excluir</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div><a class="btn btn-primary mb-3" href="{{ url_for('index') }}">Tela Inicial</a></div>
+    <footer>
+        <p class="text-center">Desenvolvido por <a href="https://github.com/FilipeHoffmann">Filipe Antonio Hoffmann</a></p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
